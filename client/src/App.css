@@ -136,6 +136,7 @@ body {
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.2s;
+  color: #2d3748;
 }
 
 .search-input:focus {
@@ -158,6 +159,7 @@ body {
   border-radius: 6px;
   font-size: 0.9rem;
   transition: border-color 0.2s;
+  color: #2d3748;
 }
 
 .filter-select:focus,
