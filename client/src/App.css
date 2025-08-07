@@ -27,19 +27,70 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 2rem 0;
-  text-align: center;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.header h1 {
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.header-text {
+  text-align: left;
+  flex: 1;
+}
+
+.header-text h1 {
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
   font-weight: 700;
 }
 
-.header p {
+.header-text p {
   font-size: 1.1rem;
   opacity: 0.9;
+}
+
+.header-auth {
+  flex-shrink: 0;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.auth-btn {
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.login-btn {
+  background: transparent;
+  color: white;
+}
+
+.login-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.register-btn {
+  background: white;
+  color: #667eea;
+}
+
+.register-btn:hover {
+  background: #f7fafc;
+  transform: translateY(-1px);
 }
 
 /* Main content */
@@ -415,8 +466,22 @@ body {
     padding: 0 16px;
   }
 
-  .header h1 {
+  .header-content {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .header-text {
+    text-align: center;
+  }
+
+  .header-text h1 {
     font-size: 2rem;
+  }
+
+  .auth-buttons {
+    justify-content: center;
   }
 
   .filter-row {

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import AuthModal from './components/AuthModal';
+import UserMenu from './components/UserMenu';
 import './App.css';
 
 interface Listing {
@@ -30,12 +33,14 @@ interface Filters {
   maxPrice: string;
 }
 
-function App() {
+function AppContent() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [filters, setFilters] = useState<Filters>({
     search: '',
     type: 'all',
@@ -44,6 +49,8 @@ function App() {
     minPrice: '',
     maxPrice: ''
   });
+
+  const { user, loading: authLoading } = useAuth();
 
   const API_BASE = 'http://localhost:3001/api';
 
@@ -98,8 +105,38 @@ function App() {
     <div className="app">
       <header className="header">
         <div className="container">
-          <h1>🏢 Сервис торговых помещений</h1>
-          <p>Найдите идеальное место для вашего бизнеса</p>
+          <div className="header-content">
+            <div className="header-text">
+              <h1>🏢 Сервис торговых помещений</h1>
+              <p>Найдите идеальное место для вашего бизнеса</p>
+            </div>
+            <div className="header-auth">
+              {user ? (
+                <UserMenu />
+              ) : (
+                <div className="auth-buttons">
+                  <button 
+                    onClick={() => {
+                      setAuthMode('login');
+                      setShowAuthModal(true);
+                    }}
+                    className="auth-btn login-btn"
+                  >
+                    Войти
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setAuthMode('register');
+                      setShowAuthModal(true);
+                    }}
+                    className="auth-btn register-btn"
+                  >
+                    Регистрация
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </header>
 
@@ -165,7 +202,14 @@ function App() {
               </div>
 
               <button
-                onClick={() => setShowAddForm(true)}
+                onClick={() => {
+                  if (user) {
+                    setShowAddForm(true);
+                  } else {
+                    setAuthMode('register');
+                    setShowAuthModal(true);
+                  }
+                }}
                 className="add-button"
               >
                 + Добавить объявление
@@ -320,8 +364,23 @@ function App() {
         </button>
           </div>
         </div>
-      )}
-      </div>
+            )}
+
+      {/* Модальное окно авторизации */}
+      <AuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        initialMode={authMode}
+      />
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
