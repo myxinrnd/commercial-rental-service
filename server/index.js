@@ -7,10 +7,87 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const cookieParser = require('cookie-parser');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 const PORT = 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+
+// Swagger конфигурация
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Сервис торговых помещений API',
+      version: '1.0.0',
+      description: 'API для управления объявлениями о сдаче торговых помещений в аренду',
+      contact: {
+        name: 'API Support',
+        email: 'support@commercial-rental.com'
+      }
+    },
+    servers: [
+      {
+        url: 'http://localhost:3001',
+        description: 'Development server'
+      }
+    ],
+    components: {
+      securitySchemes: {
+        cookieAuth: {
+          type: 'apiKey',
+          in: 'cookie',
+          name: 'token'
+        }
+      },
+      schemas: {
+        User: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', format: 'uuid' },
+            name: { type: 'string' },
+            email: { type: 'string', format: 'email' },
+            phone: { type: 'string' },
+            role: { type: 'string', enum: ['user', 'admin'] },
+            createdAt: { type: 'string', format: 'date-time' }
+          }
+        },
+        Listing: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', format: 'uuid' },
+            title: { type: 'string' },
+            description: { type: 'string' },
+            area: { type: 'integer' },
+            price: { type: 'integer' },
+            location: { type: 'string' },
+            type: { type: 'string', enum: ['Магазин', 'Ресторан/Кафе', 'Офис', 'Склад'] },
+            floor: { type: 'integer' },
+            totalFloors: { type: 'integer' },
+            hasParking: { type: 'boolean' },
+            hasStorage: { type: 'boolean' },
+            contactName: { type: 'string' },
+            contactPhone: { type: 'string' },
+            contactEmail: { type: 'string', format: 'email' },
+            images: { type: 'array', items: { type: 'string' } },
+            createdAt: { type: 'string', format: 'date-time' },
+            isActive: { type: 'boolean' }
+          }
+        },
+        Error: {
+          type: 'object',
+          properties: {
+            error: { type: 'string' }
+          }
+        }
+      }
+    }
+  },
+  apis: ['./index.js'] // путь к файлам с аннотациями
+};
+
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 // Middleware
 app.use(cors({
@@ -20,6 +97,13 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Swagger UI
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Commercial Rental API'
+}));
 
 // Настройка multer для загрузки файлов
 const storage = multer.diskStorage({
@@ -235,7 +319,62 @@ async function createSampleData() {
 
 // API Routes
 
-// Регистрация пользователя
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Регистрация нового пользователя
+ *     tags: [Авторизация]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Имя пользователя
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email адрес
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *                 description: Пароль (минимум 6 символов)
+ *               phone:
+ *                 type: string
+ *                 description: Номер телефона (необязательно)
+ *     responses:
+ *       201:
+ *         description: Пользователь успешно зарегистрирован
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Ошибка валидации
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Ошибка сервера
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
@@ -290,7 +429,48 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-// Вход пользователя
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Вход пользователя в систему
+ *     tags: [Авторизация]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email адрес
+ *               password:
+ *                 type: string
+ *                 description: Пароль
+ *     responses:
+ *       200:
+ *         description: Успешный вход
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Неверные учетные данные
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -335,19 +515,112 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// Выход пользователя
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Выход пользователя из системы
+ *     tags: [Авторизация]
+ *     responses:
+ *       200:
+ *         description: Успешный выход
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 app.post('/api/auth/logout', (req, res) => {
   res.clearCookie('token');
   res.json({ message: 'Выход выполнен успешно' });
 });
 
-// Получение текущего пользователя
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Получение информации о текущем пользователе
+ *     tags: [Авторизация]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Информация о пользователе
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Не авторизован
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.get('/api/auth/me', authenticateToken, (req, res) => {
   const { password, ...userWithoutPassword } = req.user;
   res.json({ user: userWithoutPassword });
 });
 
-// Получить все объявления
+/**
+ * @swagger
+ * /api/listings:
+ *   get:
+ *     summary: Получить все объявления
+ *     tags: [Объявления]
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Поиск по названию, описанию или адресу
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [Магазин, Ресторан/Кафе, Офис, Склад]
+ *         description: Тип помещения
+ *       - in: query
+ *         name: minArea
+ *         schema:
+ *           type: integer
+ *         description: Минимальная площадь (м²)
+ *       - in: query
+ *         name: maxArea
+ *         schema:
+ *           type: integer
+ *         description: Максимальная площадь (м²)
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: integer
+ *         description: Минимальная цена (₽/мес)
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: integer
+ *         description: Максимальная цена (₽/мес)
+ *     responses:
+ *       200:
+ *         description: Список объявлений
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Listing'
+ *       500:
+ *         description: Ошибка сервера
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.get('/api/listings', async (req, res) => {
   try {
     const listings = await getListings();
@@ -395,7 +668,34 @@ app.get('/api/listings', async (req, res) => {
   }
 });
 
-// Получить объявление по ID
+/**
+ * @swagger
+ * /api/listings/{id}:
+ *   get:
+ *     summary: Получить объявление по ID
+ *     tags: [Объявления]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID объявления
+ *     responses:
+ *       200:
+ *         description: Объявление найдено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Listing'
+ *       404:
+ *         description: Объявление не найдено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.get('/api/listings/:id', async (req, res) => {
   try {
     const listings = await getListings();
@@ -412,7 +712,97 @@ app.get('/api/listings/:id', async (req, res) => {
   }
 });
 
-// Создать новое объявление
+/**
+ * @swagger
+ * /api/listings:
+ *   post:
+ *     summary: Создать новое объявление
+ *     tags: [Объявления]
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *               - area
+ *               - price
+ *               - location
+ *               - type
+ *               - contactName
+ *               - contactPhone
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Название объявления
+ *               description:
+ *                 type: string
+ *                 description: Описание помещения
+ *               area:
+ *                 type: integer
+ *                 description: Площадь в квадратных метрах
+ *               price:
+ *                 type: integer
+ *                 description: Цена аренды в месяц (₽)
+ *               location:
+ *                 type: string
+ *                 description: Адрес помещения
+ *               type:
+ *                 type: string
+ *                 enum: [Магазин, Ресторан/Кафе, Офис, Склад]
+ *                 description: Тип помещения
+ *               floor:
+ *                 type: integer
+ *                 description: Этаж
+ *               totalFloors:
+ *                 type: integer
+ *                 description: Общее количество этажей
+ *               hasParking:
+ *                 type: boolean
+ *                 description: Наличие парковки
+ *               hasStorage:
+ *                 type: boolean
+ *                 description: Наличие склада
+ *               contactName:
+ *                 type: string
+ *                 description: Имя контактного лица
+ *               contactPhone:
+ *                 type: string
+ *                 description: Телефон для связи
+ *               contactEmail:
+ *                 type: string
+ *                 format: email
+ *                 description: Email для связи
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Фотографии помещения (до 10 файлов)
+ *     responses:
+ *       201:
+ *         description: Объявление создано
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Listing'
+ *       400:
+ *         description: Ошибка валидации
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Не авторизован
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.post('/api/listings', upload.array('images', 10), async (req, res) => {
   try {
     const {
@@ -462,7 +852,69 @@ app.post('/api/listings', upload.array('images', 10), async (req, res) => {
   }
 });
 
-// Отправить сообщение владельцу объявления
+/**
+ * @swagger
+ * /api/listings/{id}/contact:
+ *   post:
+ *     summary: Отправить сообщение владельцу объявления
+ *     tags: [Объявления]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID объявления
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - phone
+ *               - message
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Имя отправителя
+ *               phone:
+ *                 type: string
+ *                 description: Телефон отправителя
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email отправителя (необязательно)
+ *               message:
+ *                 type: string
+ *                 description: Текст сообщения
+ *     responses:
+ *       200:
+ *         description: Сообщение отправлено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Ошибка валидации
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Объявление не найдено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.post('/api/listings/:id/contact', async (req, res) => {
   try {
     const { name, phone, email, message } = req.body;
@@ -500,6 +952,7 @@ async function startServer() {
     console.log(`🚀 Сервер запущен на http://localhost:${PORT}`);
     console.log(`📋 API доступно на http://localhost:${PORT}/api/listings`);
     console.log(`🔐 Авторизация доступна на http://localhost:${PORT}/api/auth`);
+    console.log(`📚 Swagger документация: http://localhost:${PORT}/swagger`);
   });
 }
 

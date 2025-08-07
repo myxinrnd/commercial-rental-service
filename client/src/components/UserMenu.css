@@ -1,4 +1,4 @@
-/* User Menu Styles */
+/* User Menu в стиле Авито */
 .user-menu {
   position: relative;
   display: inline-block;
@@ -8,33 +8,35 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
+  background: #fff;
+  border: 1px solid #dfe3e8;
+  color: #232323;
   padding: 8px 16px;
-  border-radius: 50px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
-  font-size: 0.9rem;
+  transition: all 0.15s ease;
+  font-size: 14px;
   font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .user-menu-trigger:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
+  background: #f1f3f4;
+  border-color: #c4cdd5;
 }
 
 .user-avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  background: linear-gradient(135deg, #00c896 0%, #00b385 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #fff;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
 .user-name {
@@ -42,10 +44,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #232323;
 }
 
 .user-menu-arrow {
-  transition: transform 0.2s;
+  transition: transform 0.15s ease;
+  color: #636b7a;
+  flex-shrink: 0;
 }
 
 .user-menu-arrow.open {
@@ -65,20 +70,20 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
   z-index: 1000;
-  min-width: 220px;
-  border: 1px solid #e2e8f0;
+  min-width: 240px;
+  border: 1px solid #e8ecef;
   overflow: hidden;
-  animation: dropdownSlideIn 0.2s ease-out;
+  animation: dropdownSlideIn 0.15s ease-out;
 }
 
 @keyframes dropdownSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-10px) scale(0.95);
+    transform: translateY(-8px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -88,20 +93,21 @@
 
 .user-menu-header {
   padding: 16px;
-  background: #f7fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e8ecef;
 }
 
 .user-info strong {
   display: block;
-  color: #2d3748;
-  font-size: 0.95rem;
-  margin-bottom: 2px;
+  color: #232323;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
 }
 
 .user-info span {
-  color: #718096;
-  font-size: 0.85rem;
+  color: #636b7a;
+  font-size: 14px;
 }
 
 .user-menu-items {
@@ -116,19 +122,21 @@
   padding: 12px 16px;
   background: none;
   border: none;
-  color: #4a5568;
+  color: #232323;
   cursor: pointer;
-  transition: background-color 0.2s;
-  font-size: 0.9rem;
+  transition: background-color 0.15s ease;
+  font-size: 14px;
   text-align: left;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .user-menu-item:hover {
-  background: #f7fafc;
+  background: #f8f9fa;
 }
 
 .user-menu-item span {
-  font-size: 1.1rem;
+  font-size: 16px;
+  color: #636b7a;
 }
 
 .user-menu-item.logout {
@@ -136,12 +144,12 @@
 }
 
 .user-menu-item.logout:hover {
-  background: #fed7d7;
+  background: #fff5f5;
 }
 
 .user-menu-divider {
   border: none;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #e8ecef;
   margin: 8px 0;
 }
 
@@ -155,17 +163,17 @@
   .user-avatar {
     width: 28px;
     height: 28px;
-    font-size: 0.8rem;
+    font-size: 12px;
   }
 
   .user-name {
     max-width: 80px;
-    font-size: 0.85rem;
+    font-size: 13px;
   }
 
   .user-menu-dropdown {
-    min-width: 200px;
-    right: -10px;
+    min-width: 220px;
+    right: -8px;
   }
 }
 
@@ -177,5 +185,16 @@
   .user-menu-trigger {
     padding: 6px;
     gap: 0;
+    min-width: 44px;
+    justify-content: center;
+  }
+
+  .user-menu-arrow {
+    display: none;
+  }
+
+  .user-menu-dropdown {
+    right: 0;
+    min-width: 200px;
   }
 }

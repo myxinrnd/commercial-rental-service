@@ -1,4 +1,4 @@
-/* Auth Modal Styles */
+/* Auth Modal в стиле Авито */
 .auth-modal-overlay {
   position: fixed;
   top: 0;
@@ -14,22 +14,22 @@
 }
 
 .auth-modal-content {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  padding: 32px;
   max-width: 480px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  animation: modalSlideIn 0.3s ease-out;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  animation: modalSlideIn 0.2s ease-out;
 }
 
 @keyframes modalSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-50px) scale(0.95);
+    transform: translateY(-20px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -39,118 +39,121 @@
 
 .auth-modal-close {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 16px;
+  right: 16px;
   background: none;
   border: none;
-  font-size: 2rem;
+  font-size: 24px;
   cursor: pointer;
-  color: #a0aec0;
-  width: 40px;
-  height: 40px;
+  color: #9da4ae;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s;
+  border-radius: 4px;
+  transition: all 0.15s ease;
 }
 
 .auth-modal-close:hover {
-  background-color: #f7fafc;
-  color: #4a5568;
+  background-color: #f1f3f4;
+  color: #636b7a;
 }
 
 .auth-modal-header {
   text-align: center;
-  margin-bottom: 2rem;
-  padding-right: 3rem;
+  margin-bottom: 32px;
+  padding-right: 40px;
 }
 
 .auth-modal-header h2 {
-  color: #2d3748;
-  margin-bottom: 0.5rem;
-  font-size: 1.75rem;
+  color: #232323;
+  margin-bottom: 8px;
+  font-size: 24px;
   font-weight: 700;
 }
 
 .auth-modal-header p {
-  color: #718096;
-  font-size: 1rem;
-  line-height: 1.5;
+  color: #636b7a;
+  font-size: 16px;
+  line-height: 1.4;
 }
 
 .auth-form {
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
-  color: #4a5568;
-  font-weight: 600;
-  font-size: 0.9rem;
+  margin-bottom: 8px;
+  color: #232323;
+  font-weight: 500;
+  font-size: 14px;
 }
 
 .form-group input {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.2s;
-  background: #fafafa;
-  color: #2d3748;
+  border: 2px solid #dfe3e8;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #232323;
+  background: #fff;
+  transition: all 0.15s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  background: white;
+  border-color: #00c896;
+  box-shadow: 0 0 0 3px rgba(0, 200, 150, 0.1);
 }
 
 .form-group input::placeholder {
-  color: #a0aec0;
+  color: #9da4ae;
 }
 
 .auth-error {
-  background: #fed7d7;
-  color: #c53030;
+  background: #fff5f5;
+  color: #e53e3e;
   padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  border: 1px solid #feb2b2;
-  font-size: 0.9rem;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border: 1px solid #fed7d7;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .auth-submit-btn {
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #00c896;
+  color: #fff;
   border: none;
   padding: 14px 20px;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
-  overflow: hidden;
+  transition: all 0.15s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .auth-submit-btn:hover:not(:disabled) {
+  background: #00b385;
   transform: translateY(-1px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
 .auth-submit-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+  background: #9da4ae;
 }
 
 .auth-submit-btn:active {
@@ -159,52 +162,59 @@
 
 .auth-switch {
   text-align: center;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  padding-top: 24px;
+  border-top: 1px solid #e8ecef;
 }
 
 .auth-switch p {
-  color: #4a5568;
+  color: #636b7a;
   margin: 0;
+  font-size: 14px;
 }
 
 .auth-switch-btn {
   background: none;
   border: none;
-  color: #667eea;
+  color: #00c896;
   font-weight: 600;
   cursor: pointer;
-  text-decoration: underline;
   padding: 0;
-  font-size: inherit;
-  transition: color 0.2s;
+  font-size: 14px;
+  transition: color 0.15s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .auth-switch-btn:hover {
-  color: #5a67d8;
+  color: #00b385;
+  text-decoration: underline;
 }
 
 /* Responsive design */
 @media (max-width: 480px) {
   .auth-modal-content {
-    margin: 10px;
-    padding: 1.5rem;
+    margin: 12px;
+    padding: 24px;
   }
 
   .auth-modal-header {
-    padding-right: 2rem;
+    padding-right: 32px;
+    margin-bottom: 24px;
   }
 
   .auth-modal-header h2 {
-    font-size: 1.5rem;
+    font-size: 20px;
   }
 
   .auth-modal-close {
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 35px;
-    height: 35px;
-    font-size: 1.5rem;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+  }
+
+  .form-group input {
+    font-size: 16px; /* Prevents zoom on iOS */
   }
 }
 
@@ -216,11 +226,24 @@
 .form-group input:focus-visible,
 .auth-submit-btn:focus-visible,
 .auth-switch-btn:focus-visible {
-  outline: 2px solid #667eea;
+  outline: 2px solid #00c896;
   outline-offset: 2px;
 }
 
-/* Loading state */
-.auth-submit-btn:disabled {
-  background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+/* Loading state animation */
+.auth-submit-btn:disabled::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  border: 2px solid transparent;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

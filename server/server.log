@@ -1,0 +1,4 @@
+🚀 Сервер запущен на http://localhost:3001
+📋 API доступно на http://localhost:3001/api/listings
+🔐 Авторизация доступна на http://localhost:3001/api/auth
+📚 Swagger документация: http://localhost:3001/swagger

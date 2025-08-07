@@ -228,7 +228,7 @@ function AppContent() {
             Найдено объявлений: <strong>{listings.length}</strong>
           </div>
 
-          {/* Список объявлений */}
+          {/* Список объявлений в стиле Авито */}
           <div className="listings-grid">
             {listings.map((listing) => (
               <div
@@ -236,36 +236,38 @@ function AppContent() {
                 className="listing-card"
                 onClick={() => setSelectedListing(listing)}
               >
-                <div className="listing-header">
-                  <h3 className="listing-title">{listing.title}</h3>
-                  <span className="listing-type">{listing.type}</span>
-                </div>
-
-                <div className="listing-info">
-                  <div className="location">📍 {listing.location}</div>
-                  <div className="details">
-                    <span>📐 {listing.area} м²</span>
-                    <span>🏢 {listing.floor}/{listing.totalFloors} этаж</span>
+                <div className="listing-card-content">
+                  <div className="listing-header">
+                    <h3 className="listing-title">{listing.title}</h3>
+                    <span className="listing-type">{listing.type}</span>
                   </div>
-                </div>
 
-                <div className="listing-description">
-                  {listing.description.substring(0, 120)}
-                  {listing.description.length > 120 && '...'}
-                </div>
+                  <div className="listing-info">
+                    <div className="location">📍 {listing.location}</div>
+                    <div className="details">
+                      <span>{listing.area} м²</span>
+                      <span>{listing.floor}/{listing.totalFloors} эт.</span>
+                    </div>
+                  </div>
 
-                <div className="listing-features">
-                  {listing.hasParking && <span className="feature">🚗 Парковка</span>}
-                  {listing.hasStorage && <span className="feature">📦 Склад</span>}
-                </div>
+                  <div className="listing-description">
+                    {listing.description.substring(0, 120)}
+                    {listing.description.length > 120 && '...'}
+                  </div>
 
-                <div className="listing-footer">
-                  <div className="price">{formatPrice(listing.price)}/мес</div>
-                  <div className="date">Добавлено: {formatDate(listing.createdAt)}</div>
-                </div>
+                  <div className="listing-features">
+                    {listing.hasParking && <span className="feature">Парковка</span>}
+                    {listing.hasStorage && <span className="feature">Склад</span>}
+                  </div>
 
-                <div className="contact-preview">
-                  <span>📞 {listing.contactName}</span>
+                  <div className="listing-footer">
+                    <div className="price">{formatPrice(listing.price)} ₽/мес</div>
+                    <div className="date">{formatDate(listing.createdAt)}</div>
+                  </div>
+
+                  <div className="contact-preview">
+                    {listing.contactName}
+                  </div>
                 </div>
               </div>
             ))}
@@ -372,7 +374,7 @@ function AppContent() {
         onClose={() => setShowAuthModal(false)}
         initialMode={authMode}
       />
-    </div>
+      </div>
   );
 }
 
