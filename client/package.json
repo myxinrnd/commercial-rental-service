@@ -1,13 +1,16 @@
 {
-  "name": "client",
+  "name": "tutestate-client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:analyze": "tsc -b && vite build --mode analyze",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "size": "npx vite-bundle-analyzer dist"
   },
   "dependencies": {
     "react": "^19.1.1",

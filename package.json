@@ -1,7 +1,7 @@
 {
-  "name": "commercial-rental-service",
+  "name": "tutestate",
   "version": "1.0.0",
-  "description": "Веб-сервис объявлений для сдачи торговых помещений",
+  "description": "TutEstate - современный сервис коммерческой недвижимости",
   "main": "server/index.js",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
@@ -11,8 +11,8 @@
     "start": "cd server && npm start",
     "install-all": "npm install && cd client && npm install && cd ../server && npm install"
   },
-  "keywords": ["rental", "commercial", "real-estate", "listings"],
-  "author": "",
+  "keywords": ["tutestate", "rental", "commercial", "real-estate", "listings", "недвижимость"],
+  "author": "TutEstate Team",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"

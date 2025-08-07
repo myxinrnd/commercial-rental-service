@@ -1,7 +1,7 @@
 {
-  "name": "commercial-rental-server",
+  "name": "tutestate-server",
   "version": "1.0.0",
-  "description": "Backend API для сервиса торговых помещений",
+  "description": "TutEstate Backend API",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -9,10 +9,13 @@
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "express-rate-limit": "^8.0.1",
     "fs-extra": "^11.1.1",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "swagger-jsdoc": "^6.2.8",

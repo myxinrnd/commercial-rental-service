@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug CSS для 1680×807</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-header {
+            background: #0D64A6;
+            color: white;
+            padding: 20px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .test-full-width {
+            background: #e3f2fd;
+            padding: 20px;
+            margin: 20px -20px;
+            border-left: 4px solid #0D64A6;
+        }
+        
+        .screen-info {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid #ff9800;
+        }
+        
+        /* Стили для широких экранов (включая 1680px) */
+        @media screen and (min-width: 1400px) {
+            .test-header {
+                background: #4caf50 !important;
+            }
+            
+            .test-header::after {
+                content: " ✅ СТИЛИ ДЛЯ ШИРОКИХ ЭКРАНОВ ПРИМЕНЕНЫ!";
+                font-weight: bold;
+            }
+            
+            .test-full-width {
+                width: 100vw !important;
+                margin-left: calc(-50vw + 50%) !important;
+                margin-right: calc(-50vw + 50%) !important;
+                background: #c8e6c9 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🔧 Тест CSS для разрешения 1680×807</h1>
+            <p>Эта страница поможет проверить применяются ли стили для вашего разрешения</p>
+        </div>
+        
+        <div class="screen-info">
+            <h3>📱 Информация о экране:</h3>
+            <p><strong>Ширина экрана:</strong> <span id="screenWidth"></span>px</p>
+            <p><strong>Высота экрана:</strong> <span id="screenHeight"></span>px</p>
+            <p><strong>Ширина окна:</strong> <span id="windowWidth"></span>px</p>
+            <p><strong>Высота окна:</strong> <span id="windowHeight"></span>px</p>
+            <p><strong>Device Pixel Ratio:</strong> <span id="dpr"></span></p>
+            <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+        </div>
+        
+        <div class="test-full-width">
+            <h3>🎯 Тест полноширинного элемента</h3>
+            <p>Если вы видите этот блок <strong>зеленым</strong> и он выходит за границы контейнера - значит стили для 1680px применяются корректно!</p>
+        </div>
+        
+        <div>
+            <h3>📋 Инструкции:</h3>
+            <ol>
+                <li><strong>Если header зеленый</strong> - медиа-запрос для 1680px работает</li>
+                <li><strong>Если синий блок стал зеленым и растянулся</strong> - полноширинные стили работают</li>
+                <li><strong>Если ничего не изменилось</strong> - есть проблема с CSS</li>
+            </ol>
+        </div>
+        
+        <button onclick="location.href='http://localhost:5173'" style="
+            background: #0D64A6;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+        ">🏠 Вернуться на сайт</button>
+    </div>
+
+    <script>
+        // Показываем информацию о экране
+        document.getElementById('screenWidth').textContent = screen.width;
+        document.getElementById('screenHeight').textContent = screen.height;
+        document.getElementById('windowWidth').textContent = window.innerWidth;
+        document.getElementById('windowHeight').textContent = window.innerHeight;
+        document.getElementById('dpr').textContent = window.devicePixelRatio;
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+        
+        // Проверяем медиа-запрос
+        if (window.matchMedia('(min-width: 1400px)').matches) {
+            console.log('✅ Медиа-запрос (min-width: 1400px) активен');
+        } else {
+            console.log('❌ Медиа-запрос (min-width: 1400px) НЕ активен');
+            console.log('Текущая ширина окна:', window.innerWidth);
+        }
+    </script>
+</body>
+</html>

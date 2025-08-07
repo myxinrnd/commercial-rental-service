@@ -1,105 +1,211 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useCallback, memo, useMemo } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthModal from './components/AuthModal';
 import UserMenu from './components/UserMenu';
+import Pagination from './components/Pagination';
+import SkeletonCard from './components/SkeletonCard';
+import Filters from './components/Filters';
+import YandexMap from './components/YandexMap';
+import ViewToggle from './components/ViewToggle';
+// import SelfLearningAI from './components/SelfLearningAI';
+import type { Listing } from './types';
+import { formatPrice, formatDate } from './utils/helpers';
+import { useListings } from './hooks/useListings';
 import './App.css';
+import './components/Filters.css';
+import './components/YandexMap.css';
 
-interface Listing {
-  id: string;
-  title: string;
-  description: string;
-  area: number;
-  price: number;
-  location: string;
-  type: string;
-  floor: number;
-  totalFloors: number;
-  hasParking: boolean;
-  hasStorage: boolean;
-  contactName: string;
-  contactPhone: string;
-  contactEmail: string;
-  images: string[];
-  createdAt: string;
-  isActive: boolean;
-}
+// Мемоизированный компонент карточки объявления
+const ListingCard = memo(({ listing, onSelect }: { listing: Listing; onSelect: (listing: Listing) => void }) => (
+  <div
+    className="listing-card"
+    onClick={() => onSelect(listing)}
+  >
+    <div className="listing-badge">
+      <span className="listing-type">{listing.type}</span>
+    </div>
+    
+    <div className="listing-content">
+      <h3 className="listing-title">{listing.title}</h3>
+      <p className="listing-description">{listing.description}</p>
+      
+      <div className="listing-details">
+        <div className="detail-item">
+          <span className="detail-icon">📐</span>
+          <span>{listing.area} м²</span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-icon">🏢</span>
+          <span>{listing.floor}/{listing.totalFloors} этаж</span>
+        </div>
+        {listing.hasParking && (
+          <div className="detail-item">
+            <span className="detail-icon">🅿️</span>
+            <span>Парковка</span>
+          </div>
+        )}
+        {listing.hasStorage && (
+          <div className="detail-item">
+            <span className="detail-icon">📦</span>
+            <span>Склад</span>
+          </div>
+        )}
+      </div>
+      
+      <div className="listing-location">
+        <span className="detail-icon">📍</span>
+        <span>{listing.location}</span>
+      </div>
+      
+      <div className="listing-footer">
+        <div className="listing-price">{formatPrice(listing.price)}</div>
+        <div className="listing-date">{formatDate(listing.createdAt)}</div>
+      </div>
+    </div>
+  </div>
+));
 
-interface Filters {
-  search: string;
-  type: string;
-  minArea: string;
-  maxArea: string;
-  minPrice: string;
-  maxPrice: string;
-}
+ListingCard.displayName = 'ListingCard';
+
+
+
+// Мемоизированная модалка с деталями
+const ListingModal = memo(({ 
+  listing, 
+  onClose 
+}: { 
+  listing: Listing | null; 
+  onClose: () => void; 
+}) => {
+  if (!listing) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>×</button>
+        
+        <div className="modal-header">
+          <h2>{listing.title}</h2>
+          <div className="modal-badges">
+            <span className="listing-type-badge">{listing.type}</span>
+          </div>
+        </div>
+
+        <div className="modal-body">
+          <p className="modal-description">{listing.description}</p>
+          
+          <div className="modal-details">
+            <div className="detail-row">
+              <span className="detail-label">Площадь:</span>
+              <span className="detail-value">{listing.area} м²</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Этаж:</span>
+              <span className="detail-value">{listing.floor} из {listing.totalFloors}</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Адрес:</span>
+              <span className="detail-value">{listing.location}</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Парковка:</span>
+              <span className="detail-value">{listing.hasParking ? 'Есть' : 'Нет'}</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Склад:</span>
+              <span className="detail-value">{listing.hasStorage ? 'Есть' : 'Нет'}</span>
+            </div>
+          </div>
+
+          <div className="modal-contact">
+            <h3>Контактная информация</h3>
+            <div className="contact-item">
+              <span className="contact-label">Контактное лицо:</span>
+              <span className="contact-value">{listing.contactName}</span>
+            </div>
+            <div className="contact-item">
+              <span className="contact-label">Телефон:</span>
+              <span className="contact-value">{listing.contactPhone}</span>
+            </div>
+            <div className="contact-item">
+              <span className="contact-label">Email:</span>
+              <span className="contact-value">{listing.contactEmail}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="modal-footer">
+          <div className="modal-price">{formatPrice(listing.price)}</div>
+          <div className="modal-date">Размещено {formatDate(listing.createdAt)}</div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+ListingModal.displayName = 'ListingModal';
 
 function AppContent() {
-  const [listings, setListings] = useState<Listing[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [showAddForm, setShowAddForm] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-  const [filters, setFilters] = useState<Filters>({
-    search: '',
-    type: 'all',
-    minArea: '',
-    maxArea: '',
-    minPrice: '',
-    maxPrice: ''
-  });
+  const [view, setView] = useState<'list' | 'map'>('list');
 
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
+  const {
+    listings,
+    filteredListings,
+    loading,
+    error,
+    filters,
+    appliedFilters,
+    pagination,
+    isAISearch,
+    handleFilterChange,
+    applyFilters,
+    clearFilter,
+    handlePageChange
+    // handleAISearchResults,
+    // handleAISearchClear
+  } = useListings();
 
-  const API_BASE = 'http://localhost:3001/api';
+  const handleListingSelect = useCallback((listing: Listing) => {
+    setSelectedListing(listing);
+    // Отправляем событие для самообучающегося AI
+    const event = new CustomEvent('listingClick', {
+      detail: { listingId: listing.id }
+    });
+    window.dispatchEvent(event);
+  }, []);
 
-  useEffect(() => {
-    fetchListings();
-  }, [filters]);
+  const handleAuthOpen = useCallback((mode: 'login' | 'register') => {
+    setAuthMode(mode);
+    setShowAuthModal(true);
+  }, []);
 
-  const fetchListings = async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value && value !== 'all') {
-          params.append(key, value);
-        }
-      });
+  const handleModalClose = useCallback(() => {
+    setSelectedListing(null);
+    setShowAuthModal(false);
+  }, []);
 
-      const response = await fetch(`${API_BASE}/listings?${params}`);
-      if (!response.ok) throw new Error('Ошибка загрузки объявлений');
-      
-      const data = await response.json();
-      setListings(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Произошла ошибка');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const displayedListings = useMemo(() => {
+    return isAISearch ? filteredListings : listings;
+  }, [isAISearch, filteredListings, listings]);
 
-  const handleFilterChange = (key: keyof Filters, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-  };
+  // Мемоизируем объявления с координатами для карты
+  const mapListings = useMemo(() => {
+    return displayedListings.filter(listing => listing.coordinates);
+  }, [displayedListings]);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('ru-RU').format(price) + ' ₽';
-  };
+  // Функция для рендеринга skeleton карточек
+  const renderSkeletonCards = useCallback(() => {
+    return Array.from({ length: 20 }, (_, index) => (
+      <SkeletonCard key={`skeleton-${index}`} index={index} />
+    ));
+  }, []);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ru-RU');
-  };
-
-  if (loading && listings.length === 0) {
-  return (
-      <div className="app">
-        <div className="loading">Загрузка объявлений...</div>
-      </div>
-    );
-  }
+  // Показываем skeleton при первоначальной загрузке
+  const showSkeleton = loading && listings.length === 0;
 
   return (
     <div className="app">
@@ -107,7 +213,7 @@ function AppContent() {
         <div className="container">
           <div className="header-content">
             <div className="header-text">
-              <h1>🏢 Сервис торговых помещений</h1>
+              <h1>🏢 TutEstate</h1>
               <p>Найдите идеальное место для вашего бизнеса</p>
             </div>
             <div className="header-auth">
@@ -116,19 +222,13 @@ function AppContent() {
               ) : (
                 <div className="auth-buttons">
                   <button 
-                    onClick={() => {
-                      setAuthMode('login');
-                      setShowAuthModal(true);
-                    }}
+                    onClick={() => handleAuthOpen('login')}
                     className="auth-btn login-btn"
                   >
                     Войти
                   </button>
                   <button 
-                    onClick={() => {
-                      setAuthMode('register');
-                      setShowAuthModal(true);
-                    }}
+                    onClick={() => handleAuthOpen('register')}
                     className="auth-btn register-btn"
                   >
                     Регистрация
@@ -142,238 +242,120 @@ function AppContent() {
 
       <main className="main">
         <div className="container">
-          {/* Фильтры и поиск */}
-          <div className="filters">
-            <div className="search-box">
-              <input
-                type="text"
-                placeholder="Поиск по названию, описанию, адресу..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="search-input"
-              />
-            </div>
+          {/* AI-Поиск */}
+          {/* <SelfLearningAI 
+            listings={listings}
+            onResults={handleAISearchResults}
+            onClear={handleAISearchClear}
+          /> */}
 
-            <div className="filter-row">
-              <select
-                value={filters.type}
-                onChange={(e) => handleFilterChange('type', e.target.value)}
-                className="filter-select"
-              >
-                <option value="all">Все типы</option>
-                <option value="Магазин">Магазин</option>
-                <option value="Ресторан/Кафе">Ресторан/Кафе</option>
-                <option value="Офис">Офис</option>
-                <option value="Склад">Склад</option>
-              </select>
+          {/* Фильтры */}
+          <Filters 
+            filters={filters}
+            appliedFilters={appliedFilters}
+            onFilterChange={handleFilterChange}
+            onApplyFilters={applyFilters}
+            onClearFilter={clearFilter}
+          />
 
-              <div className="range-inputs">
-                <input
-                  type="number"
-                  placeholder="Площадь от"
-                  value={filters.minArea}
-                  onChange={(e) => handleFilterChange('minArea', e.target.value)}
-                  className="filter-input"
-                />
-                <input
-                  type="number"
-                  placeholder="Площадь до"
-                  value={filters.maxArea}
-                  onChange={(e) => handleFilterChange('maxArea', e.target.value)}
-                  className="filter-input"
-                />
-              </div>
-
-              <div className="range-inputs">
-                <input
-                  type="number"
-                  placeholder="Цена от"
-                  value={filters.minPrice}
-                  onChange={(e) => handleFilterChange('minPrice', e.target.value)}
-                  className="filter-input"
-                />
-                <input
-                  type="number"
-                  placeholder="Цена до"
-                  value={filters.maxPrice}
-                  onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
-                  className="filter-input"
-                />
-              </div>
-
-              <button
-                onClick={() => {
-                  if (user) {
-                    setShowAddForm(true);
-                  } else {
-                    setAuthMode('register');
-                    setShowAuthModal(true);
-                  }
-                }}
-                className="add-button"
-              >
-                + Добавить объявление
-              </button>
-            </div>
-          </div>
+          {/* Переключатель видов */}
+          <ViewToggle 
+            view={view}
+            onViewChange={setView}
+          />
 
           {/* Результаты */}
+          <div className="results">
+            <div className="results-info">
+              <p>
+                Найдено: <strong>{pagination?.totalCount || displayedListings.length}</strong> объявлений
+                {pagination && pagination.totalPages > 1 && (
+                  <span className="page-info">
+                    {" "}• Показано {((pagination.currentPage - 1) * pagination.limit) + 1}–{Math.min(pagination.currentPage * pagination.limit, pagination.totalCount)} из {pagination.totalCount}
+                    {" "}• Страница {pagination.currentPage} из {pagination.totalPages}
+                  </span>
+                )}
+              </p>
+            </div>
+
           {error && (
             <div className="error-message">
-              ❌ {error}
+                {error}
             </div>
           )}
 
-          <div className="results-info">
-            Найдено объявлений: <strong>{listings.length}</strong>
-          </div>
-
-          {/* Список объявлений в стиле Авито */}
-          <div className="listings-grid">
-            {listings.map((listing) => (
-              <div
-                key={listing.id}
-                className="listing-card"
-                onClick={() => setSelectedListing(listing)}
-              >
-                <div className="listing-card-content">
-                  <div className="listing-header">
-                    <h3 className="listing-title">{listing.title}</h3>
-                    <span className="listing-type">{listing.type}</span>
+            <div className="results-content">
+              {view === 'map' ? (
+                // Отображение карты
+                <YandexMap
+                  listings={mapListings}
+                  onMarkerClick={handleListingSelect}
+                  className="main-map"
+                />
+              ) : (
+                // Отображение списка
+                showSkeleton ? (
+                  <div className="listings-grid">
+                    {renderSkeletonCards()}
                   </div>
-
-                  <div className="listing-info">
-                    <div className="location">📍 {listing.location}</div>
-                    <div className="details">
-                      <span>{listing.area} м²</span>
-                      <span>{listing.floor}/{listing.totalFloors} эт.</span>
+                ) : loading && displayedListings.length > 0 ? (
+                  <div className="listings-grid loading">
+                    {displayedListings.map((listing) => (
+                      <ListingCard
+                        key={listing.id}
+                        listing={listing}
+                        onSelect={handleListingSelect}
+                      />
+                    ))}
+                  </div>
+                ) : displayedListings.length === 0 ? (
+                  <div className="listings-grid">
+                    <div className="no-results">
+                      <div className="no-results-icon">🔍</div>
+                      <h3>Объявления не найдены</h3>
+                      <p>Попробуйте изменить параметры поиска или сбросить фильтры</p>
                     </div>
                   </div>
-
-                  <div className="listing-description">
-                    {listing.description.substring(0, 120)}
-                    {listing.description.length > 120 && '...'}
-                  </div>
-
-                  <div className="listing-features">
-                    {listing.hasParking && <span className="feature">Парковка</span>}
-                    {listing.hasStorage && <span className="feature">Склад</span>}
-                  </div>
-
-                  <div className="listing-footer">
-                    <div className="price">{formatPrice(listing.price)} ₽/мес</div>
-                    <div className="date">{formatDate(listing.createdAt)}</div>
-                  </div>
-
-                  <div className="contact-preview">
-                    {listing.contactName}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {listings.length === 0 && !loading && (
-            <div className="no-results">
-              <h3>Объявления не найдены</h3>
-              <p>Попробуйте изменить параметры поиска</p>
+                ) : (
+                  <>
+                    <div className={`listings-grid ${loading ? 'loading' : ''}`}>
+                      {displayedListings.map((listing) => (
+                        <ListingCard
+                          key={listing.id}
+                          listing={listing}
+                          onSelect={handleListingSelect}
+                        />
+                      ))}
+                    </div>
+                    
+                    {/* Пагинация */}
+                    {pagination && (
+                      <Pagination 
+                        pagination={pagination}
+                        onPageChange={handlePageChange}
+                      />
+                    )}
+                  </>
+                )
+              )}
             </div>
-          )}
+          </div>
         </div>
       </main>
 
-      {/* Модальное окно с деталями */}
-      {selectedListing && (
-        <div className="modal-overlay" onClick={() => setSelectedListing(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="modal-close"
-              onClick={() => setSelectedListing(null)}
-            >
-              ×
-            </button>
+      {/* Модалки */}
+      <ListingModal 
+        listing={selectedListing}
+        onClose={handleModalClose}
+      />
 
-            <h2>{selectedListing.title}</h2>
-            
-            <div className="modal-details">
-              <div className="detail-row">
-                <strong>Тип:</strong> {selectedListing.type}
-              </div>
-              <div className="detail-row">
-                <strong>Площадь:</strong> {selectedListing.area} м²
-              </div>
-              <div className="detail-row">
-                <strong>Этаж:</strong> {selectedListing.floor} из {selectedListing.totalFloors}
-              </div>
-              <div className="detail-row">
-                <strong>Адрес:</strong> {selectedListing.location}
-              </div>
-              <div className="detail-row">
-                <strong>Цена:</strong> {formatPrice(selectedListing.price)} в месяц
-              </div>
-            </div>
-
-            <div className="modal-description">
-              <h4>Описание</h4>
-              <p>{selectedListing.description}</p>
-            </div>
-
-            <div className="modal-features">
-              <h4>Дополнительно</h4>
-              <div className="features-list">
-                {selectedListing.hasParking && <span className="feature">🚗 Парковка</span>}
-                {selectedListing.hasStorage && <span className="feature">📦 Склад</span>}
-              </div>
-            </div>
-
-            <div className="modal-contact">
-              <h4>Контакты</h4>
-              <div className="contact-info">
-                <div><strong>Имя:</strong> {selectedListing.contactName}</div>
-                <div><strong>Телефон:</strong> <a href={`tel:${selectedListing.contactPhone}`}>{selectedListing.contactPhone}</a></div>
-                {selectedListing.contactEmail && (
-                  <div><strong>Email:</strong> <a href={`mailto:${selectedListing.contactEmail}`}>{selectedListing.contactEmail}</a></div>
-                )}
-              </div>
-
-              <button className="contact-button">
-                📞 Связаться с арендодателем
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Форма добавления объявления */}
-      {showAddForm && (
-        <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
-          <div className="modal-content form-modal" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="modal-close"
-              onClick={() => setShowAddForm(false)}
-            >
-              ×
-            </button>
-
-            <h2>Добавить объявление</h2>
-            <p>Форма добавления будет реализована в следующем этапе</p>
-            
-            <button
-              onClick={() => setShowAddForm(false)}
-              className="cancel-button"
-            >
-              Закрыть
-        </button>
-          </div>
-        </div>
-            )}
-
-      {/* Модальное окно авторизации */}
+      {showAuthModal && (
       <AuthModal 
         isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
+          onClose={handleModalClose}
         initialMode={authMode}
       />
+      )}
       </div>
   );
 }

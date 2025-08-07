@@ -1,0 +1,390 @@
+/* =================================
+   АДАПТИВНЫЕ СТИЛИ
+   ================================= */
+
+/* === НАСТОЛЬНЫЕ МОНИТОРЫ 1800px+ === */
+@media (min-width: 1800px) {
+  .container {
+    padding: 0 var(--spacing-2xl);
+  }
+  
+  .listings-grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: var(--spacing-xl) !important;
+  }
+  
+  .filter-row {
+    grid-template-columns: 200px 1fr;
+  }
+  
+  .range-inputs {
+    gap: var(--spacing-2xl);
+  }
+}
+
+/* === ШИРОКИЕ ЭКРАНЫ 1680x807 === */
+@media screen and (min-width: 1650px) and (max-width: 1720px) {
+  .listings-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: var(--spacing-lg) !important;
+  }
+  
+  .listing-card {
+    min-width: 280px !important;
+    max-width: 320px !important;
+  }
+  
+  .listing-title {
+    font-size: var(--font-size-base) !important;
+  }
+  
+  .listing-content {
+    padding: var(--spacing-md) !important;
+  }
+}
+
+/* === БОЛЬШИЕ ЭКРАНЫ 1400-1800px === */
+@media (min-width: 1400px) and (max-width: 1800px) {
+  .listings-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--spacing-lg);
+  }
+  
+  .filter-row {
+    grid-template-columns: 180px 1fr;
+  }
+}
+
+/* === СРЕДНИЕ ЭКРАНЫ 1024-1366px === */
+@media (min-width: 1024px) and (max-width: 1366px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .listings-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+  }
+  
+  .header-text h1 {
+    font-size: var(--font-size-xl);
+  }
+  
+  .filter-row {
+    grid-template-columns: 160px 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .range-inputs {
+    gap: var(--spacing-md);
+  }
+}
+
+/* === МАКБУК 13" 1280px === */
+@media (max-width: 1280px) {
+  .listings-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+  
+  .header-text h1 {
+    font-size: var(--font-size-xl);
+  }
+  
+  .header-text p {
+    font-size: var(--font-size-sm);
+  }
+  
+  .filter-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .range-inputs {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}
+
+/* === ПЛАНШЕТЫ 768-1023px === */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .listings-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+  
+  .header-content {
+    gap: var(--spacing-md);
+  }
+  
+  .auth-buttons {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .auth-buttons .btn {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .filter-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .range-inputs {
+    flex-direction: row;
+    gap: var(--spacing-sm);
+  }
+  
+  .modal-content {
+    margin: var(--spacing-md);
+    padding: var(--spacing-lg);
+  }
+}
+
+/* === МОБИЛЬНЫЕ УСТРОЙСТВА 320-768px === */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .header {
+    padding: var(--spacing-sm) 0;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    text-align: center;
+  }
+  
+  .header-text h1 {
+    font-size: var(--font-size-lg);
+  }
+  
+  .header-text p {
+    font-size: var(--font-size-xs);
+  }
+  
+  .auth-buttons {
+    flex-direction: row;
+    gap: var(--spacing-xs);
+  }
+  
+  .auth-buttons .btn {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .main {
+    padding: var(--spacing-md) 0;
+  }
+  
+  .filters {
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .filter-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .range-inputs {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .range-pair {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .listings-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .listing-card {
+    max-width: none;
+  }
+  
+  .listing-content {
+    padding: var(--spacing-md);
+  }
+  
+  .listing-title {
+    font-size: var(--font-size-base);
+  }
+  
+  .listing-description {
+    font-size: var(--font-size-xs);
+  }
+  
+  .listing-details {
+    gap: var(--spacing-xs);
+  }
+  
+  .detail-item {
+    font-size: 10px;
+    padding: var(--spacing-xs);
+  }
+  
+  .listing-footer {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    align-items: flex-start;
+  }
+  
+  .listing-price {
+    font-size: var(--font-size-base);
+  }
+  
+  .results-info {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    text-align: center;
+  }
+  
+  .modal-content {
+    margin: var(--spacing-xs);
+    padding: var(--spacing-md);
+    max-height: 95vh;
+  }
+  
+  .modal-header h2 {
+    font-size: var(--font-size-xl);
+    padding-right: var(--spacing-lg);
+  }
+  
+  .modal-close {
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 28px;
+    height: 28px;
+    font-size: var(--font-size-lg);
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: flex-start;
+  }
+  
+  .modal-price {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+/* === МАЛЕНЬКИЕ МОБИЛЬНЫЕ 320-480px === */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--spacing-xs);
+  }
+  
+  .header-text h1 {
+    font-size: var(--font-size-base);
+  }
+  
+  .header-text p {
+    display: none;
+  }
+  
+  .filters {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal-content {
+    margin: var(--spacing-xs);
+    padding: var(--spacing-sm);
+  }
+  
+  .modal-header h2 {
+    font-size: var(--font-size-lg);
+  }
+  
+  .modal-contact {
+    padding: var(--spacing-sm);
+  }
+  
+  .contact-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+}
+
+/* === ЛАНДШАФТНАЯ ОРИЕНТАЦИЯ ПЛАНШЕТОВ === */
+@media (max-width: 1024px) and (orientation: landscape) {
+  .listings-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .header-content {
+    flex-direction: row;
+  }
+  
+  .modal-content {
+    max-height: 85vh;
+  }
+}
+
+/* === ПРИНТЕРЫ === */
+@media print {
+  .header,
+  .filters,
+  .modal-overlay,
+  .auth-buttons {
+    display: none !important;
+  }
+  
+  .listings-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+  
+  .listing-card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+  }
+}
+
+/* === ВЫСОКИЕ DPI ЭКРАНЫ === */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .detail-icon {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* === ПОЛЬЗОВАТЕЛИ С ОГРАНИЧЕННОЙ ПОДВИЖНОСТЬЮ === */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .listing-card:hover {
+    transform: none;
+  }
+  
+  .btn:hover {
+    transform: none;
+  }
+}
+
+/* === СВЕТЛАЯ ТЕМА (по умолчанию) === */
+/* Темная тема отключена - используем только светлую */

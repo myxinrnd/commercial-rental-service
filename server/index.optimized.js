@@ -85,7 +85,7 @@ if (process.env.NODE_ENV !== 'production') {
     definition: {
       openapi: '3.0.0',
       info: {
-        title: 'TutEstate API',
+        title: 'Сервис торговых помещений API',
         version: '1.0.0',
         description: 'API для управления объявлениями о сдаче торговых помещений в аренду'
       },
